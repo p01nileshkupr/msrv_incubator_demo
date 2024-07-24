@@ -1,5 +1,3 @@
-# msrv_incubator_demo
-
 ### IDE: 
 Intellij IDEA Ultimate
 
