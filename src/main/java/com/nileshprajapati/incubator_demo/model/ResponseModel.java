@@ -3,12 +3,16 @@ package com.nileshprajapati.incubator_demo.model;
 public class ResponseModel {
     private String output;
 
-    public ResponseModel(String message) {
-        this.output = message;
+    public ResponseModel(String output) {
+        this.output = output;
     }
 
-    public String getMessage() {
+    public String getOutput() {
         return output;
+    }
+
+    public void setOutput(String output) {
+        this.output = output;
     }
 }
 

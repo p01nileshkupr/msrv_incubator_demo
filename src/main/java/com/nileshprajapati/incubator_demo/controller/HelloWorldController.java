@@ -20,22 +20,27 @@ public class HelloWorldController {
         this.helloWorldService = helloWorldService;
     }
 
-    @GetMapping(path = "/greet",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(
+            path = "/greet",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<ResponseModel> helloWorld() {
         ResponseModel response = new ResponseModel("Hello World");
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(path = "/post_message",
+    @PostMapping(
+            path = "/post_message",
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<ResponseModel> postMessage(@RequestBody InputRequest request) throws Exception {
-        if(request.inputParam == null) {
+        String input = request.getInputParam();
+
+        if(input == null) {
             throw new BadRequestException("Request is empty and required parameter is missing.");
         }
 
-        String input = request.getInputParam();
         if(input.isEmpty()) {
             throw new BadRequestException("Required parameter is empty");
         }
