@@ -2,7 +2,6 @@ package com.nileshprajapati.incubator_demo.controller;
 
 import com.nileshprajapati.incubator_demo.model.City;
 import com.nileshprajapati.incubator_demo.service.CityService;
-import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
