@@ -1,0 +1,166 @@
+openapi: 3.0.1
+info:
+  title: NEWS API DOCUMENT
+  description: This is the server for NEWS feeds.
+  termsOfService: https://newsapi.org/terms
+  contact:
+    name: News API
+    url: https://newsapi.org/
+    email: support@newsapi.org
+  license:
+    name: News API
+    url: https://newsapi.org/
+  version: 1.0.0
+servers:
+  - url: https://newsapi.org/{api-version}/
+    description: Production
+    variables:
+      api-version:
+        enum:
+          - v1
+          - v2
+        default: v2
+paths:
+  /top-headlines:
+    get:
+      tags:
+        - top-headlines
+      description: This endpoint provides live top and breaking headlines for a
+        country, specific category in a country, single source, or multiple
+        sources. You can also search with keywords. Articles are sorted by the
+        earliest date published first.
+      summary: This endpoint is great for retrieving headlines for use with news
+        tickers or similar.
+      operationId: topHeadlines-ByCountry
+      parameters:
+        - $ref: "#/components/parameters/countryName"
+        - $ref: "#/components/parameters/apiKey"
+      responses:
+        "200":
+          description: Successful operation  (The request has succeeded and response is
+            returned containing the result of the action.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopHeadlineResponse"
+        "400":
+          description: Bad Request (The request has been rejected since it did not pass
+            input validation checks. It must have required parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+        "401":
+          description: Unauthorised request (The request is unauthorised. Please pass
+            required key parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+        "404":
+          description: Not Found (The requested resource is not found.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+        "500":
+          description: Internal Server Error (The server has encountered an unexpected
+            condition which prevent it from executing the request.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+        "502":
+          description: Bad Gateway (The server, while acting as a gateway or proxy,
+            received an invalid response from the upstream server it accessed in
+            attempting to fulfill the request.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+        default:
+          description: General Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceError"
+      externalDocs:
+        url: https://newsapi.org/docs/endpoints/top-headlines
+        description: This endpoint is great for retrieving headlines for use with news
+          tickers or similar.
+components:
+  parameters:
+    countryName:
+      name: country
+      in: query
+      description: Country code where you want to read news from.
+      required: true
+      schema:
+        type: string
+      allowEmptyValue: false
+    apiKey:
+      name: apiKey
+      in: query
+      description: An api key which received from NEWS API after signup.
+      required: true
+      schema:
+        type: string
+      allowEmptyValue: false
+  schemas:
+    ServiceError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        code:
+          type: string
+          example: general
+        message:
+          type: string
+          example: Something went wrong. Please try again later.
+    TopHeadlineResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        totalResults:
+          type: integer
+          format: int32
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewsArticle"
+    NewsArticle:
+      type: object
+      properties:
+        source:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        author:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        url:
+          type: string
+        urlToImage:
+          type: string
+          nullable: true
+        publishedAt:
+          type: string
+        content:
+          type: string
+          nullable: true
