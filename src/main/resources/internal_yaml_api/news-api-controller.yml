@@ -6,7 +6,7 @@ info:
     name: Nileshkumar Prajapati
   version: 1.0.0
 paths:
-  /top-news-sources:
+  /news/top-news-sources:
     get:
       tags:
         - news-api
@@ -67,7 +67,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NewsServiceError"
-  /topNewsHeadlines:
+  /news/topNewsHeadlines:
     get:
       tags:
         - news-api
