@@ -21,17 +21,80 @@ servers:
           - v2
         default: v2
 paths:
+  /top-headlines/sources:
+    get:
+      tags:
+        - news-sources
+      description: This endpoint returns the subset of news publishers that top headlines (/v2/top-headlines) are available from. It's mainly a convenience endpoint that you can use to keep track of the publishers available on the API, and you can pipe it straight through to your users.
+      operationId: news-sources
+      parameters:
+        - $ref: "#/components/parameters/apiKey"
+      responses:
+        "200":
+          description: Successful operation  (The request has succeeded and response is
+            returned containing the result of the action.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsSourcesResponseModel"
+        "400":
+          description: Bad Request (The request has been rejected since it did not pass
+            input validation checks. It must have required parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
+        "401":
+          description: Unauthorised request (The request is unauthorised. Please pass
+            required key parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
+        "404":
+          description: Not Found (The requested resource is not found.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
+        "500":
+          description: Internal Server Error (The server has encountered an unexpected
+            condition which prevent it from executing the request.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
+        "502":
+          description: Bad Gateway (The server, while acting as a gateway or proxy,
+            received an invalid response from the upstream server it accessed in
+            attempting to fulfill the request.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
+        default:
+          description: General Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceErrorModel"
   /top-headlines:
     get:
       tags:
-        - top-headlines
+        - news-top-headlines
       description: This endpoint provides live top and breaking headlines for a
         country, specific category in a country, single source, or multiple
         sources. You can also search with keywords. Articles are sorted by the
         earliest date published first.
       summary: This endpoint is great for retrieving headlines for use with news
         tickers or similar.
-      operationId: topHeadlines-ByCountry
+      operationId: top-headlines
       parameters:
         - $ref: "#/components/parameters/countryName"
         - $ref: "#/components/parameters/apiKey"
@@ -42,34 +105,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TopHeadlineResponse"
+                $ref: "#/components/schemas/TopHeadlineResponseModel"
         "400":
           description: Bad Request (The request has been rejected since it did not pass
             input validation checks. It must have required parameters)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
         "401":
           description: Unauthorised request (The request is unauthorised. Please pass
             required key parameters)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
         "404":
           description: Not Found (The requested resource is not found.)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
         "500":
           description: Internal Server Error (The server has encountered an unexpected
             condition which prevent it from executing the request.)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
         "502":
           description: Bad Gateway (The server, while acting as a gateway or proxy,
             received an invalid response from the upstream server it accessed in
@@ -77,19 +140,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
         "503":
           description: Service unavailable
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
         default:
           description: General Error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceError"
+                $ref: "#/components/schemas/ServiceErrorModel"
       externalDocs:
         url: https://newsapi.org/docs/endpoints/top-headlines
         description: This endpoint is great for retrieving headlines for use with news
@@ -113,7 +176,7 @@ components:
         type: string
       allowEmptyValue: false
   schemas:
-    ServiceError:
+    ServiceErrorModel:
       type: object
       properties:
         status:
@@ -125,7 +188,7 @@ components:
         message:
           type: string
           example: Something went wrong. Please try again later.
-    TopHeadlineResponse:
+    TopHeadlineResponseModel:
       type: object
       properties:
         status:
@@ -136,8 +199,8 @@ components:
         articles:
           type: array
           items:
-            $ref: "#/components/schemas/NewsArticle"
-    NewsArticle:
+            $ref: "#/components/schemas/NewsArticleModel"
+    NewsArticleModel:
       type: object
       properties:
         source:
@@ -164,3 +227,37 @@ components:
         content:
           type: string
           nullable: true
+    NewsSourcesResponseModel:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "ok"
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsSourcesModel'
+    NewsSourcesModel:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "abc-news-au"
+        name:
+          type: string
+          example: "ABC News (AU)"
+        description:
+          type: string
+          example: "Australia's most trusted source of local, national and world news. Comprehensive, independent, in-depth analysis, the latest business, sport, weather and more."
+        url:
+          type: string
+          example: "https://www.abc.net.au/news"
+        category:
+          type: string
+          example: "general"
+        language:
+          type: string
+          example: "en"
+        country:
+          type: string
+          example: "au"

@@ -1,8 +1,9 @@
 package com.nileshprajapati.incubator_demo.config;
 
-import com.nileshprajapati.incubator_demo.codegen.api.TopHeadlinesApi;
-import com.nileshprajapati.incubator_demo.thirdparty_interface.CityApi;
-import okhttp3.OkHttpClient;
+import com.nileshprajapati.incubator_demo.external.apis.NewsSourcesApi;
+import com.nileshprajapati.incubator_demo.external.apis.NewsTopHeadlinesApi;
+import com.nileshprajapati.incubator_demo.interfaces.CityApi;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
@@ -11,21 +12,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Configuration
 public class ApplicationConfiguration {
 
-    private OkHttpClient client;
-
-    ApplicationConfiguration() {
-        this.client = new OkHttpClient.Builder().build();
-    }
-
     @Bean
-    public TopHeadlinesApi topHeadlinesApi() {
+    public NewsTopHeadlinesApi topHeadlinesApi() {
         Retrofit build = new Retrofit.Builder()
                 .baseUrl(APICategory.news.baseURL())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(this.client)
                 .build();
 
-        return build.create(TopHeadlinesApi.class);
+        return build.create(NewsTopHeadlinesApi.class);
     }
 
     @Bean
@@ -33,10 +27,19 @@ public class ApplicationConfiguration {
         Retrofit build = new Retrofit.Builder()
                 .baseUrl(APICategory.city.baseURL())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(this.client)
                 .build();
 
         return build.create(CityApi.class);
+    }
+
+    @Bean
+    public NewsSourcesApi newsSourcesApi() {
+        Retrofit build = new Retrofit.Builder()
+                .baseUrl(APICategory.news.baseURL())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return build.create(NewsSourcesApi.class);
     }
 
     public enum APICategory {

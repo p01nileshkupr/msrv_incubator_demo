@@ -1,20 +1,16 @@
 package com.nileshprajapati.incubator_demo.service;
 
-import com.nileshprajapati.incubator_demo.config.ApplicationConfiguration;
 import com.nileshprajapati.incubator_demo.model.City;
 import com.nileshprajapati.incubator_demo.model.GetCityResponseModel;
-import com.nileshprajapati.incubator_demo.thirdparty_interface.CityApi;
-import okhttp3.OkHttpClient;
+import com.nileshprajapati.incubator_demo.interfaces.CityApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Service

@@ -1,0 +1,225 @@
+openapi: 3.0.1
+info:
+  title: NEWS Controller API Definition
+  description: Gives you highlight of microservice with Spring
+  contact:
+    name: Nileshkumar Prajapati
+  version: 1.0.0
+paths:
+  /top-news-sources:
+    get:
+      tags:
+        - news-api
+      description: This endpoint returns the subset of news publishers that top headlines (/v2/top-headlines) are available from. It's mainly a convenience endpoint that you can use to keep track of the publishers available on the API, and you can pipe it straight through to your users.
+      operationId: top-news-sources
+      responses:
+        "200":
+          description: Successful operation  (The request has succeeded and response is
+            returned containing the result of the action.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsSourcesResponse"
+        "400":
+          description: Bad Request (The request has been rejected since it did not pass
+            input validation checks. It must have required parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+        "401":
+          description: Unauthorised request (The request is unauthorised. Please pass
+            required key parameters)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+        "404":
+          description: Not Found (The requested resource is not found.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+        "500":
+          description: Internal Server Error (The server has encountered an unexpected
+            condition which prevent it from executing the request.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+        "502":
+          description: Bad Gateway (The server, while acting as a gateway or proxy,
+            received an invalid response from the upstream server it accessed in
+            attempting to fulfill the request.)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+        default:
+          description: General Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsServiceError"
+  /topNewsHeadlines:
+    get:
+      tags:
+        - news-api
+      description: This endpoint provides live top and breaking headlines for a
+        country. Articles are sorted by the
+        earliest date published first.
+      summary: This endpoint is for news headlines based on country code
+      operationId: top-headlines-using-country-code
+      parameters:
+        - $ref: '#/components/parameters/countryCode'
+      responses:
+        '200':
+          description: Successful operation  (The request has succeeded and response is
+            returned containing the result of the action.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopNewsHeadlineResponse'
+        '400':
+          description: Bad Request (The request has been rejected since it did not pass
+            input validation checks. It must have required parameters)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+        '401':
+          description: Unauthorised request (The request is unauthorised. Please pass
+            required key parameters)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+        '404':
+          description: Not Found (The requested resource is not found.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+        '500':
+          description: Internal Server Error (The server has encountered an unexpected
+            condition which prevent it from executing the request.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+        '502':
+          description: Bad Gateway (The server, while acting as a gateway or proxy,
+            received an invalid response from the upstream server it accessed in
+            attempting to fulfill the request.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsServiceError'
+components:
+  parameters:
+    countryCode:
+      name: country
+      in: query
+      description: Country code where you want to read news from.
+      required: true
+      schema:
+        type: string
+      allowEmptyValue: false
+  schemas:
+    NewsServiceError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        code:
+          type: string
+          example: general
+        message:
+          type: string
+          example: Something went wrong. Please try again later.
+    TopNewsHeadlineResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        totalResults:
+          type: integer
+          format: int32
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewsArticle"
+    NewsArticle:
+      type: object
+      properties:
+        source:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        author:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        url:
+          type: string
+        urlToImage:
+          type: string
+          nullable: true
+        publishedAt:
+          type: string
+        content:
+          type: string
+          nullable: true
+    NewsSourcesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "ok"
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsSource'
+    NewsSource:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "abc-news-au"
+        name:
+          type: string
+          example: "ABC News (AU)"
+        description:
+          type: string
+          example: "Australia's most trusted source of local, national and world news. Comprehensive, independent, in-depth analysis, the latest business, sport, weather and more."
+        url:
+          type: string
+          example: "https://www.abc.net.au/news"
+        category:
+          type: string
+          example: "general"
+        language:
+          type: string
+          example: "en"
+        country:
+          type: string
+          example: "au"

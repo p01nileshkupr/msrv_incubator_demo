@@ -1,4 +1,4 @@
-package com.nileshprajapati.incubator_demo.thirdparty_interface;
+package com.nileshprajapati.incubator_demo.interfaces;
 
 import com.nileshprajapati.incubator_demo.model.GetCityResponseModel;
 
