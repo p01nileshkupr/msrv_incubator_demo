@@ -10,7 +10,11 @@ paths:
     get:
       tags:
         - news-api
-      description: This endpoint returns the subset of news publishers that top headlines (/v2/top-headlines) are available from. It's mainly a convenience endpoint that you can use to keep track of the publishers available on the API, and you can pipe it straight through to your users.
+      description: This endpoint returns the subset of news publishers that top
+        headlines (/v2/top-headlines) are available from. It's mainly a
+        convenience endpoint that you can use to keep track of the publishers
+        available on the API, and you can pipe it straight through to your
+        users.
       operationId: top-news-sources
       responses:
         "200":
@@ -72,61 +76,60 @@ paths:
       tags:
         - news-api
       description: This endpoint provides live top and breaking headlines for a
-        country. Articles are sorted by the
-        earliest date published first.
+        country. Articles are sorted by the earliest date published first.
       summary: This endpoint is for news headlines based on country code
       operationId: top-headlines-using-country-code
       parameters:
-        - $ref: '#/components/parameters/countryCode'
+        - $ref: "#/components/parameters/countryCode"
       responses:
-        '200':
+        "200":
           description: Successful operation  (The request has succeeded and response is
             returned containing the result of the action.)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TopNewsHeadlineResponse'
-        '400':
+                $ref: "#/components/schemas/TopNewsHeadlineResponse"
+        "400":
           description: Bad Request (The request has been rejected since it did not pass
             input validation checks. It must have required parameters)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsServiceError'
-        '401':
+                $ref: "#/components/schemas/NewsServiceError"
+        "401":
           description: Unauthorised request (The request is unauthorised. Please pass
             required key parameters)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsServiceError'
-        '404':
+                $ref: "#/components/schemas/NewsServiceError"
+        "404":
           description: Not Found (The requested resource is not found.)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsServiceError'
-        '500':
+                $ref: "#/components/schemas/NewsServiceError"
+        "500":
           description: Internal Server Error (The server has encountered an unexpected
             condition which prevent it from executing the request.)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsServiceError'
-        '502':
+                $ref: "#/components/schemas/NewsServiceError"
+        "502":
           description: Bad Gateway (The server, while acting as a gateway or proxy,
             received an invalid response from the upstream server it accessed in
             attempting to fulfill the request.)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsServiceError'
-        '503':
+                $ref: "#/components/schemas/NewsServiceError"
+        "503":
           description: Service unavailable
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewsServiceError'
+                $ref: "#/components/schemas/NewsServiceError"
 components:
   parameters:
     countryCode:
@@ -136,6 +139,7 @@ components:
       required: true
       schema:
         type: string
+        example: us
       allowEmptyValue: false
   schemas:
     NewsServiceError:
@@ -155,9 +159,11 @@ components:
       properties:
         status:
           type: string
+          example: ok
         totalResults:
           type: integer
           format: int32
+          example: 38
         articles:
           type: array
           items:
@@ -170,22 +176,29 @@ components:
           properties:
             id:
               type: string
+              example: google-news
             name:
               type: string
+              example: Google News
         author:
           type: string
+          example: YourTango
         title:
           type: string
+          example: Joy Returns For 3 Zodiac Signs After The Sun Trines The Moon On August
+            15, 2024 - YourTango
         description:
           type: string
           nullable: true
         url:
           type: string
+          example: https://news.google.com/rss/articles/CBMinwFBVV95cUxNckhMRWF6b2Y2N2k5MHE3WFlDRmxvYkFlbkpNUDQwYTFFREl2cWxUYVB3M1lsSGkzLTZ1Y01WbUVLejVWSEV6eHg3QnBmSDAyWmotcFg3cjhZdnZMQU4wWjBsRzVUWXM4ZGJjbUw4bGFMX3NoV3ItX3E4dzRDT0toTFY0Wk1TbkVuSU50WTk2Q3A0dVROLVJzZ3NIUUdEd0XSAaQBQVVfeXFMTWtaTXItaV8xcGVYVXFSYWtoejViWHIzdFB2Q2tvZ29BY2Zma0ltWDRqaTd3ZUVleDlrUGFiMnpxWUZkQXVhT3FJUFA5eElMR19mLWRTSDJtdlM3NFh5akRxTjF1QjRqakF4eEZTenRub0UyVU1JNFNtNmt2N205Q1FZR2xZY20yY255b01RRXhua2lVOHgyZU5iekFoM1pLNGtqR1A?oc=5
         urlToImage:
           type: string
           nullable: true
         publishedAt:
           type: string
+          example: 2024-08-15T03:03:07Z
         content:
           type: string
           nullable: true
@@ -194,32 +207,34 @@ components:
       properties:
         status:
           type: string
-          example: "ok"
+          example: ok
         sources:
           type: array
           items:
-            $ref: '#/components/schemas/NewsSource'
+            $ref: "#/components/schemas/NewsSource"
     NewsSource:
       type: object
       properties:
         id:
           type: string
-          example: "abc-news-au"
+          example: abc-news-au
         name:
           type: string
-          example: "ABC News (AU)"
+          example: ABC News (AU)
         description:
           type: string
-          example: "Australia's most trusted source of local, national and world news. Comprehensive, independent, in-depth analysis, the latest business, sport, weather and more."
+          example: Australia's most trusted source of local, national and world news.
+            Comprehensive, independent, in-depth analysis, the latest business,
+            sport, weather and more.
         url:
           type: string
-          example: "https://www.abc.net.au/news"
+          example: https://www.abc.net.au/news
         category:
           type: string
-          example: "general"
+          example: general
         language:
           type: string
-          example: "en"
+          example: en
         country:
           type: string
-          example: "au"
+          example: au
