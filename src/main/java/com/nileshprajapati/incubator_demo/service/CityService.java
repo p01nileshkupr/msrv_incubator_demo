@@ -1,27 +1,26 @@
 package com.nileshprajapati.incubator_demo.service;
 
-import com.nileshprajapati.incubator_demo.config.CityApiConfiguration;
 import com.nileshprajapati.incubator_demo.model.City;
 import com.nileshprajapati.incubator_demo.model.GetCityResponseModel;
-import com.nileshprajapati.incubator_demo.thirdparty_interface.CityApi;
+import com.nileshprajapati.incubator_demo.interfaces.CityApi;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class CityService {
 
-    private Retrofit retrofit;
     private CityApi cityApi;
 
-    public CityService() {
-        retrofit = CityApiConfiguration.getRetrofit();
-        cityApi = retrofit.create(CityApi.class);
+    @Autowired
+    public CityService(CityApi cityApi) {
+        this.cityApi = cityApi;
     }
 
     public List<City> getAllCities(String countryID, int limit, int offset) {
@@ -33,7 +32,7 @@ public class CityService {
                GetCityResponseModel object = response.body();
                 return object.getCities();
            } else {
-               return Collections.emptyList();
+               throw new ResponseStatusException(HttpStatusCode.valueOf(response.code()), response.message());
            }
         } catch (IOException e) {
             throw new RuntimeException(e);

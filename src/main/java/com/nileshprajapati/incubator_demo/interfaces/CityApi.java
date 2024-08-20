@@ -1,7 +1,7 @@
-package com.nileshprajapati.incubator_demo.thirdparty_interface;
+package com.nileshprajapati.incubator_demo.interfaces;
 
 import com.nileshprajapati.incubator_demo.model.GetCityResponseModel;
-import io.swagger.annotations.Api;
+
 import io.swagger.v3.oas.annotations.Operation;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -9,7 +9,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 
-@Api(value = "3rd Party City API", description = "All the APIs related to CITIES")
 public interface CityApi {
 
     @Operation(summary = "Get list of cities by country_id")
