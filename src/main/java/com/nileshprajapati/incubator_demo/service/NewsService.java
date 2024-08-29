@@ -1,6 +1,6 @@
 package com.nileshprajapati.incubator_demo.service;
 
-import com.nileshprajapati.incubator_demo.config.ApplicationConfiguration;
+import com.nileshprajapati.incubator_demo.config.ExternalAPIConfigurationProperties;
 import com.nileshprajapati.incubator_demo.external.apis.NewsSourcesApi;
 import com.nileshprajapati.incubator_demo.external.apis.NewsTopHeadlinesApi;
 import com.nileshprajapati.incubator_demo.external.models.NewsArticleModel;
@@ -28,16 +28,19 @@ public class NewsService {
 
     private final NewsSourcesApi newsSourcesApi;
     private final NewsTopHeadlinesApi newsTopHeadlinesApi;
+    private final ExternalAPIConfigurationProperties externalAPIConfigurationProperties;
 
     @Autowired
-    NewsService(NewsSourcesApi newsSourcesApi, NewsTopHeadlinesApi newsTopHeadlinesApi) {
+    NewsService(NewsSourcesApi newsSourcesApi, NewsTopHeadlinesApi newsTopHeadlinesApi,
+                ExternalAPIConfigurationProperties externalAPIConfigurationProperties) {
         this.newsSourcesApi = newsSourcesApi;
         this.newsTopHeadlinesApi = newsTopHeadlinesApi;
+        this.externalAPIConfigurationProperties = externalAPIConfigurationProperties;
     }
 
     public ResponseEntity<TopNewsHeadlineResponse> getTopNewsHeadlines(String country) throws IOException {
         try {
-            Call<TopHeadlineResponseModel> apiCall = this.newsTopHeadlinesApi.topHeadlines(country, ApplicationConfiguration.APICategory.news.apiKey());
+            Call<TopHeadlineResponseModel> apiCall = this.newsTopHeadlinesApi.topHeadlines(country, externalAPIConfigurationProperties.getNewsKey());
             Response<TopHeadlineResponseModel> response = apiCall.execute();
             if (response.isSuccessful() && response.body() != null) {
                 TopHeadlineResponseModel object =  response.body();
@@ -52,7 +55,7 @@ public class NewsService {
 
     public ResponseEntity<NewsSourcesResponse> getNewsSources() throws IOException {
        try {
-           Call<NewsSourcesResponseModel> callApi = this.newsSourcesApi.newsSources(ApplicationConfiguration.APICategory.news.apiKey());
+           Call<NewsSourcesResponseModel> callApi = this.newsSourcesApi.newsSources(externalAPIConfigurationProperties.getNewsKey());
            Response<NewsSourcesResponseModel> responseModel = callApi.execute();
            if (responseModel.isSuccessful() && responseModel.body() != null) {
                NewsSourcesResponseModel newsSourcesResponseModel = responseModel.body();
