@@ -178,7 +178,6 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <dateLibrary>legacy</dateLibrary>
                                 <modelPropertyNaming>camelCase</modelPropertyNaming>
-                                <serializeModel>true</serializeModel>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -200,7 +199,6 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <dateLibrary>legacy</dateLibrary>
                                 <modelPropertyNaming>camelCase</modelPropertyNaming>
-                                <serializeModel>true</serializeModel>
                             </configOptions>
                         </configuration>
                     </execution>
