@@ -11,6 +11,8 @@ import com.nileshprajapati.incubator_demo.internal.models.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ public class NewsService {
         this.externalAPIConfigurationProperties = externalAPIConfigurationProperties;
     }
 
+    @Cacheable(value = "TopNewsHeadlines-Cache", key = "#country")
     public ResponseEntity<TopNewsHeadlineResponse> getTopNewsHeadlines(String country) throws IOException {
         try {
             Call<TopHeadlineResponseModel> apiCall = this.newsTopHeadlinesApi.topHeadlines(country, externalAPIConfigurationProperties.getNewsKey());
@@ -53,6 +56,7 @@ public class NewsService {
         }
     }
 
+    @Cacheable(value = "NewsSources-Cache")
     public ResponseEntity<NewsSourcesResponse> getNewsSources() throws IOException {
        try {
            Call<NewsSourcesResponseModel> callApi = this.newsSourcesApi.newsSources(externalAPIConfigurationProperties.getNewsKey());
