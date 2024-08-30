@@ -4,6 +4,7 @@ import com.nileshprajapati.incubator_demo.model.City;
 import com.nileshprajapati.incubator_demo.model.GetCityResponseModel;
 import com.nileshprajapati.incubator_demo.interfaces.CityApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,6 +24,7 @@ public class CityService {
         this.cityApi = cityApi;
     }
 
+    @Cacheable(value = "City-Cache", key = "#countryID + #limit + #offset")
     public List<City> getAllCities(String countryID, int limit, int offset) {
         Call<GetCityResponseModel> apiCall = cityApi.getCities(countryID, limit, offset);
         try {

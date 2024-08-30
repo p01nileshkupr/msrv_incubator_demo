@@ -1,6 +1,6 @@
 package com.nileshprajapati.incubator_demo.service;
 
-import com.nileshprajapati.incubator_demo.config.ApplicationConfiguration;
+import com.nileshprajapati.incubator_demo.config.ExternalAPIConfigurationProperties;
 import com.nileshprajapati.incubator_demo.external.apis.NewsSourcesApi;
 import com.nileshprajapati.incubator_demo.external.apis.NewsTopHeadlinesApi;
 import com.nileshprajapati.incubator_demo.external.models.NewsArticleModel;
@@ -11,11 +11,9 @@ import com.nileshprajapati.incubator_demo.internal.models.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import org.springframework.web.server.ResponseStatusException;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -28,40 +26,45 @@ public class NewsService {
 
     private final NewsSourcesApi newsSourcesApi;
     private final NewsTopHeadlinesApi newsTopHeadlinesApi;
+    private final ExternalAPIConfigurationProperties externalAPIConfigurationProperties;
 
     @Autowired
-    NewsService(NewsSourcesApi newsSourcesApi, NewsTopHeadlinesApi newsTopHeadlinesApi) {
+    NewsService(NewsSourcesApi newsSourcesApi, NewsTopHeadlinesApi newsTopHeadlinesApi,
+                ExternalAPIConfigurationProperties externalAPIConfigurationProperties) {
         this.newsSourcesApi = newsSourcesApi;
         this.newsTopHeadlinesApi = newsTopHeadlinesApi;
+        this.externalAPIConfigurationProperties = externalAPIConfigurationProperties;
     }
 
-    public ResponseEntity<TopNewsHeadlineResponse> getTopNewsHeadlines(String country) throws IOException {
+    @Cacheable(value = "TopNewsHeadlines-Cache", key = "#country")
+    public TopNewsHeadlineResponse getTopNewsHeadlines(String country) throws IOException {
         try {
-            Call<TopHeadlineResponseModel> apiCall = this.newsTopHeadlinesApi.topHeadlines(country, ApplicationConfiguration.APICategory.news.apiKey());
+            Call<TopHeadlineResponseModel> apiCall = this.newsTopHeadlinesApi.topHeadlines(country, externalAPIConfigurationProperties.getNewsKey());
             Response<TopHeadlineResponseModel> response = apiCall.execute();
             if (response.isSuccessful() && response.body() != null) {
                 TopHeadlineResponseModel object =  response.body();
-                return ResponseEntity.ok(mapToMicroserviceNewsTopHeadlinesModel(object));
+                return mapToMicroserviceNewsTopHeadlinesModel(object);
             } else {
-                throw new ResponseStatusException(HttpStatusCode.valueOf(response.code()), response.message());
+                throw new IOException(response.message());
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new IOException(e);
         }
     }
 
-    public ResponseEntity<NewsSourcesResponse> getNewsSources() throws IOException {
+    @Cacheable(value = "NewsSources-Cache")
+    public NewsSourcesResponse getNewsSources() throws IOException {
        try {
-           Call<NewsSourcesResponseModel> callApi = this.newsSourcesApi.newsSources(ApplicationConfiguration.APICategory.news.apiKey());
+           Call<NewsSourcesResponseModel> callApi = this.newsSourcesApi.newsSources(externalAPIConfigurationProperties.getNewsKey());
            Response<NewsSourcesResponseModel> responseModel = callApi.execute();
            if (responseModel.isSuccessful() && responseModel.body() != null) {
                NewsSourcesResponseModel newsSourcesResponseModel = responseModel.body();
-               return ResponseEntity.ok(mapToMicroserviceNewsSourceModel(newsSourcesResponseModel));
+               return mapToMicroserviceNewsSourceModel(newsSourcesResponseModel);
            } else {
-               throw new ResponseStatusException(HttpStatusCode.valueOf(responseModel.code()), responseModel.message());
+               throw new IOException(responseModel.message());
            }
-       } catch (Exception e) {
-           throw new RuntimeException(e);
+       } catch (IOException e) {
+           throw new IOException(e);
        }
     }
 
