@@ -1,5 +1,11 @@
 package com.nileshprajapati.incubator_demo.config;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.MemberAddressProviderConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.nileshprajapati.incubator_demo.external.apis.NewsSourcesApi;
 import com.nileshprajapati.incubator_demo.external.apis.NewsTopHeadlinesApi;
 import com.nileshprajapati.incubator_demo.interfaces.CityApi;
@@ -54,6 +60,28 @@ public class ApplicationConfiguration {
                 .build();
 
         return build.create(NewsSourcesApi.class);
+    }
+
+    @Bean
+    public ClientConfig clientConfig() {
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.setClusterName("dev");
+        return clientConfig;
+    }
+
+    @Bean
+    public Config config() {
+        return new Config();
+    }
+
+    @Bean
+    public HazelcastInstance hazelcastInstance() {
+        return Hazelcast.newHazelcastInstance(config());
+    }
+
+    @Bean
+    public HazelcastInstance clientHazelcastInstance() {
+        return HazelcastClient.newHazelcastClient(clientConfig());
     }
 }
 

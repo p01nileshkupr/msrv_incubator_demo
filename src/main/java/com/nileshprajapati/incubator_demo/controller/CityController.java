@@ -7,12 +7,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping(path = "/api/v1/city")
 public class CityController {
 
-    private CityService cityService;
+    private final CityService cityService;
 
     @Autowired
     CityController(CityService cityService) {
@@ -23,6 +25,11 @@ public class CityController {
     public List<City> getCityByCountry(@RequestParam String countryID,
                                                      @RequestParam int limit,
                                                      @RequestParam int offset) {
-        return this.cityService.getAllCities(countryID, limit, offset);
+        try {
+            Future<List<City>> futureResults = this.cityService.getAllCities(countryID, limit, offset);
+            return futureResults.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
