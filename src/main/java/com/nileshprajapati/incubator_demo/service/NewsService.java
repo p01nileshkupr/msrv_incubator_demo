@@ -12,6 +12,8 @@ import com.nileshprajapati.incubator_demo.internal.models.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import retrofit2.Call;
@@ -20,6 +22,7 @@ import retrofit2.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 @Service
 public class NewsService {
@@ -36,35 +39,37 @@ public class NewsService {
         this.externalAPIConfigurationProperties = externalAPIConfigurationProperties;
     }
 
+    @Async("taskExecutorForHeavyTasks")
     @Cacheable(value = "TopNewsHeadlines-Cache", key = "#country")
-    public TopNewsHeadlineResponse getTopNewsHeadlines(String country) throws IOException {
+    public Future<TopNewsHeadlineResponse> getTopNewsHeadlines(String country) throws Exception {
         try {
             Call<TopHeadlineResponseModel> apiCall = this.newsTopHeadlinesApi.topHeadlines(country, externalAPIConfigurationProperties.getNewsKey());
             Response<TopHeadlineResponseModel> response = apiCall.execute();
             if (response.isSuccessful() && response.body() != null) {
                 TopHeadlineResponseModel object =  response.body();
-                return mapToMicroserviceNewsTopHeadlinesModel(object);
+                return new AsyncResult<>(mapToMicroserviceNewsTopHeadlinesModel(object));
             } else {
-                throw new IOException(response.message());
+                throw new Exception(response.message());
             }
-        } catch (IOException e) {
-            throw new IOException(e);
+        } catch (Exception e) {
+            throw new Exception(e);
         }
     }
 
+    @Async("taskExecutorForHeavyTasks")
     @Cacheable(value = "NewsSources-Cache")
-    public NewsSourcesResponse getNewsSources() throws IOException {
+    public Future<NewsSourcesResponse> getNewsSources() throws Exception {
        try {
            Call<NewsSourcesResponseModel> callApi = this.newsSourcesApi.newsSources(externalAPIConfigurationProperties.getNewsKey());
            Response<NewsSourcesResponseModel> responseModel = callApi.execute();
            if (responseModel.isSuccessful() && responseModel.body() != null) {
                NewsSourcesResponseModel newsSourcesResponseModel = responseModel.body();
-               return mapToMicroserviceNewsSourceModel(newsSourcesResponseModel);
+               return new AsyncResult<>(mapToMicroserviceNewsSourceModel(newsSourcesResponseModel));
            } else {
-               throw new IOException(responseModel.message());
+               throw new Exception(responseModel.message());
            }
-       } catch (IOException e) {
-           throw new IOException(e);
+       } catch (Exception e) {
+           throw new Exception(e);
        }
     }
 

@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.Future;
+
 @RestController
 @RequestMapping(path = "/api/v1/greeting")
 public class HelloWorldController {
@@ -45,7 +47,7 @@ public class HelloWorldController {
             throw new BadRequestException("Required parameter is empty");
         }
 
-        String message = this.helloWorldService.post(input);
-        return ResponseEntity.ok(new ResponseModel(message));
+        Future<String> futureResult = this.helloWorldService.post(input);
+        return ResponseEntity.ok(new ResponseModel(futureResult.get()));
     }
 }

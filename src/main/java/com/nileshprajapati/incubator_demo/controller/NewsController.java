@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @RestController
 public class NewsController implements NewsApi {
@@ -29,9 +31,10 @@ public class NewsController implements NewsApi {
           if (country == null || country.isEmpty()) {
               throw new BadRequestException("Country code is mandatory");
           } else {
-             return ResponseEntity.ofNullable(this.newsService.getTopNewsHeadlines(country));
+              Future<TopNewsHeadlineResponse> futureResult = this.newsService.getTopNewsHeadlines(country);
+              return ResponseEntity.ofNullable(futureResult.get());
           }
-      } catch (IOException e) {
+      } catch (Exception e) {
           throw new RuntimeException(e);
       }
     }
@@ -39,8 +42,9 @@ public class NewsController implements NewsApi {
     @Override
     public ResponseEntity<NewsSourcesResponse> topNewsSources() {
         try {
-            return ResponseEntity.ofNullable(this.newsService.getNewsSources());
-        } catch (IOException e) {
+            Future<NewsSourcesResponse> futureResult = this.newsService.getNewsSources();
+            return ResponseEntity.ofNullable(futureResult.get());
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
